@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 import {
   AppBar, Toolbar, Typography, Container, Grid,
   TextField, Button, FormControl, InputLabel, Select,
@@ -7,6 +8,7 @@ import {
 } from '@mui/material';
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
   const [mentorName, setMentorName] = useState('');
   const [studentName, setStudentName] = useState('');
   const [mentors, setMentors] = useState([]);
@@ -24,21 +26,26 @@ const App = () => {
 
   const fetchMentors = async () => {
     try {
+      setLoading(true);
       const response = await fetch('https://mentor-student-api-0moh.onrender.com/mentors');
       const data = await response.json();
       setMentors(data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching mentors:', error);
     }
   };
 
   const fetchStudents = async () => {
     try {
+      setLoading(true);
       const response = await fetch('https://mentor-student-api-0moh.onrender.com/students');
       const data = await response.json();
       setStudents(data);
       setAvailableStudents(data);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching students:', error);
     }
   };
@@ -126,12 +133,19 @@ const App = () => {
   
   return (
     <div>
+    {loading ? ( 
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </div>
+    ) : ( 
+      <div>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">Mentor-Student Management</Typography>
         </Toolbar>
       </AppBar>
       <Container>
+    
         <Grid container spacing={3} style={{ marginTop: 20 }}>
           <Grid item xs={12}>
             <Typography variant="h5">Create Mentor</Typography>
@@ -247,7 +261,12 @@ const App = () => {
           </Grid>
         </Grid>
       </Container>
-    </div>
+    
+      </div>
+    )}
+  </div>
+
+
   );
 };
 
